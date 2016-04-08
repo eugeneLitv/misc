@@ -11,4 +11,5 @@ interface Account extends Report {
     float getBalance();
     boolean deposit(float x);
     boolean withdraw(float x);
+    long getAccountId();
 }
