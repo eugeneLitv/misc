@@ -24,18 +24,18 @@ public class BankApplication {
         float initialOverdraft;// = 200f + r.nextInt(200);
         int numberOfAccounts;
         Client c;
-        for (int i_client=1; i_client <= numberOfClients; i_client++) {
+        for (int i = 0; i < numberOfClients; i++) {
             initialOverdraft = 200f + r.nextInt(200);
             if (initialOverdraft < 300) {
-                c = b.addClient(new Client("Client " + i_client));
+                c = b.addClient(new Client("Client " + i));
             } else {
-                c = b.addClient(new Client("Client " + i_client, initialOverdraft));
+                c = b.addClient(new Client("Client " + i, initialOverdraft));
             }
             numberOfAccounts = r.nextInt(10);
-            System.out.println("Client: \"" + i_client + "\" numberOfAccounts: " + numberOfAccounts);
-            for (int i_acc = 1; i_acc <= numberOfAccounts; i_acc++) {
+            System.out.println("Client: \"" + i + "\" numberOfAccounts: " + numberOfAccounts);
+            for (int j = 0; j < numberOfAccounts; j++) {
                 if (!c.createAccount(r.nextBoolean() ? AccountTypes.SAVING : AccountTypes.CHECKING).deposit(1000f + r.nextInt(1000))) {
-                    System.out.println("Cannot initially deposit account number: " + i_acc);
+                    System.out.println("Cannot initially deposit account number: " + j);
                 }
             }
         }
@@ -66,9 +66,13 @@ public class BankApplication {
         /**
          * Deposit
          */
-        b.getClients().stream().forEach(c -> {c.deposit(500f);});
+        b.getClients().stream().forEach((Client c) -> c.deposit(500f));
     }
     public void test(Bank b) {
+        /**
+         * TODO: test must be repeatable - do not use Random(),
+         * use some array of predefined values for client names, balance, etc
+         */
         initialize(b);
         printBankReport(b);
         modifyBank(b);

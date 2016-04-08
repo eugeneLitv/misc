@@ -52,4 +52,23 @@ public class ClientTest {
         assertEquals("Client(initialOverdraft): Client Name incorrect", defaultClientName, client.getName());
         assertEquals("Client(initialOverdraft): initialOverdraft incorrect", initialOverdraft, client.getInitialOverdraft(), delta);
     }
+
+    @Test
+    public void createClientNameIsNullWithOverdraft() {
+        final float initialOverdraft = 100.34f;
+        final Client client;
+
+        client = new Client(null, initialOverdraft);
+        assertEquals("Client(null, initialOverdraft): Client Name incorrect", defaultClientName, client.getName());
+        assertEquals("Client(null, initialOverdraft): initialOverdraft incorrect", initialOverdraft, client.getInitialOverdraft(), delta);
+    }
+
+    @Test
+    public void createClientNameIsNull() {
+        final Client client;
+
+        client = new Client(null);
+        assertEquals("Client(initialOverdraft): Client Name incorrect", defaultClientName, client.getName());
+        assertEquals("Client(initialOverdraft): initialOverdraft incorrect", defaultOverdraft, client.getInitialOverdraft(), delta);
+    }
 }

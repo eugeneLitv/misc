@@ -9,24 +9,29 @@ package com.acme.bankapp;
 import java.util.*;
 
 class Client implements Report {
-    private String        name = "Unnamed Client";
+    private final static String defaultName = "Unnamed Client";
+
+    private String        name;
     private List<Account> accounts = null;
     private Account       activeAccount = null;
     private float         initialOverdraft = 300f;
 
-    public Client() { }
-    public Client(String n, Float o) {
-        if (n != null) {
-            name = n;
-        }
-        if (o != null) {
-            initialOverdraft = o.floatValue();
-        }
+    public Client() {
+        name = defaultName;
+    }
+    public Client(String n, float o) {
+        name = n != null ? n : defaultName;
+        initialOverdraft = o;
     }
     public Client(String n) {
-        this(n, null);
+        if (n == null) {
+            System.out.println("Client Name can not be null. Set Client Name to default \"" + defaultName + "\"");
+            name = defaultName;
+            return;
+        }
+        name = n;
     }
-    public Client(Float o) {
+    public Client(float o) {
         this(null, o);
     }
 
@@ -37,20 +42,20 @@ class Client implements Report {
         System.out.println("initialOverdraft: " + initialOverdraft);
         if ( accounts != null && !accounts.isEmpty() ) {
             int num = 0,
-                num_checking = 0,
-                num_saving = 0;
+                numChecking = 0,
+                numSaving = 0;
 
             for (Account a: accounts) {
                 num++;
                 if (a instanceof CheckingAccount) {
-                    num_checking++;
+                    numChecking++;
                 } else if (a instanceof SavingAccount) {
-                    num_saving++;
+                    numSaving++;
                 }
             }
             System.out.println("Total accounts: " + num);
-            System.out.println("Number of Saving Accounts: " + num_saving);
-            System.out.println("Number of Checking Accounts: " + num_checking);
+            System.out.println("Number of Saving Accounts: " + numSaving);
+            System.out.println("Number of Checking Accounts: " + numChecking);
             System.out.println("Total Balance: " + getBalance());
             System.out.println("Accounts:");
             accounts.forEach(Account::printReport);

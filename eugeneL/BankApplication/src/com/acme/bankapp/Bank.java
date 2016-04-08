@@ -39,6 +39,8 @@ class Bank implements Report {
                 clients = new ArrayList<Client>();
             }
             clients.add(c);
+        } else {
+            System.out.println("Can not add empty client");
         }
         return c;
     }

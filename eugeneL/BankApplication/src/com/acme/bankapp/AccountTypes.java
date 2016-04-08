@@ -8,7 +8,7 @@ enum AccountTypes {
     CHECKING("Checking"),
     SAVING("Saving");
 
-    final private String name;
+    private final String name;
 
     AccountTypes(String n) {
         name = n;

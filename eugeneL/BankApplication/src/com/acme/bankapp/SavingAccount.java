@@ -7,7 +7,7 @@ package com.acme.bankapp;
  * Time: 18:49
  */
 class SavingAccount extends AbstractAccount {
-    final static AccountTypes type = AccountTypes.SAVING;
+    private final static AccountTypes type = AccountTypes.SAVING;
 
     public AccountTypes getType() {
         return type;
