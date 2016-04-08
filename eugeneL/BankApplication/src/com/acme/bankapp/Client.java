@@ -1,11 +1,11 @@
-package com.acme.bankapp;
-
 /**
  * Created with IntelliJ IDEA 2016.1.
  * User: eugeneL
  * Date: 24/03/16
  * Time: 18:49
  */
+package com.acme.bankapp;
+
 import java.util.*;
 
 class Client implements Report {
@@ -83,13 +83,13 @@ class Client implements Report {
         return (activeAccount != null) && activeAccount.withdraw(x);
     }
 
-    public Account createAccount(String accountType) {
+    public Account createAccount(AccountTypes accountType) {
         Account a;
-        if ("checking".equals(accountType)) {
+        if (accountType == AccountTypes.CHECKING) {
             CheckingAccount ca = new CheckingAccount();
             ca.setOverdraft(initialOverdraft);
             a = ca;
-        } else if ("saving".equals(accountType)) {
+        } else if (accountType == AccountTypes.SAVING) {
             a = new SavingAccount();
         } else {
             System.out.println("Unknown account type: \"" + accountType + "\"");
@@ -105,5 +105,9 @@ class Client implements Report {
 
     public String getName() {
         return name;
+    }
+
+    public float getInitialOverdraft() {
+        return initialOverdraft;
     }
 }

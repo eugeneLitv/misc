@@ -34,13 +34,13 @@ public class BankApplication {
             numberOfAccounts = r.nextInt(10);
             System.out.println("Client: \"" + i_client + "\" numberOfAccounts: " + numberOfAccounts);
             for (int i_acc = 1; i_acc <= numberOfAccounts; i_acc++) {
-                if (!c.createAccount(r.nextBoolean() ? "saving" : "checking").deposit(1000f + r.nextInt(1000))) {
+                if (!c.createAccount(r.nextBoolean() ? AccountTypes.SAVING : AccountTypes.CHECKING).deposit(1000f + r.nextInt(1000))) {
                     System.out.println("Cannot initially deposit account number: " + i_acc);
                 }
             }
         }
-        b.addClient(new Client()).createAccount("saving").deposit(1000f);
-        b.addClient(new Client(500f)).createAccount("checking").deposit(1000f);
+        b.addClient(new Client()).createAccount(AccountTypes.SAVING).deposit(1000f);
+        b.addClient(new Client(500f)).createAccount(AccountTypes.CHECKING).deposit(1000f);
         System.out.println("========== initialize end ==========");
     }
     public void printBankReport(Bank b) {

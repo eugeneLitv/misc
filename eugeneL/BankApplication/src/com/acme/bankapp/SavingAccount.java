@@ -7,10 +7,15 @@ package com.acme.bankapp;
  * Time: 18:49
  */
 class SavingAccount extends AbstractAccount {
+    final static AccountTypes type = AccountTypes.SAVING;
+
+    public AccountTypes getType() {
+        return type;
+    }
 
     @Override
     public void printReport() {
-        System.out.println("Saving. Balance: " + balance);
+        System.out.println(type.getAccountTypeName() + " Balance: " + balance);
     }
 
     @Override

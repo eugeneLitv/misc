@@ -7,6 +7,7 @@ package com.acme.bankapp;
  * Time: 18:49
  */
 interface Account extends Report {
+    AccountTypes getType();
     float getBalance();
     boolean deposit(float x);
     boolean withdraw(float x);
