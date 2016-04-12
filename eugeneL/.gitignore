@@ -1,0 +1,43 @@
+#
+# Revert top level .gitignore
+!*
+#
+# Build output
+BankApplication/target
+BankApplication/out
+
+# Code Style
+**/.idea/**/codeStyleSettings.xml
+
+#
+# Sharing Project Settings
+# (see https://www.jetbrains.com/help/idea/2016.1/synchronizing-and-sharing-settings.html)
+#
+# For sharing project settings, .idea project configuration directory
+# should be shared via version control.
+#
+# Directory based project format (.idea directory)
+# is used by all the recent IntelliJ IDEA versions by default.
+# Here is what you need to share:
+#
+# All the files under .idea directory in the project root,
+# except the workspace.xml and tasks.xml files, which store user-specific settings.
+**/.idea/**/workspace.xml
+**/.idea/**/tasks.xml
+
+# Be careful about sharing the following:
+
+# Android artifacts that produce a signed build (will contain keystore passwords)
+# dataSources.ids, datasources.xml (can contain database passwords)
+dataSources.ids
+datasources.xml
+
+#You may consider not to share the following:
+# gradle.xml.
+# XML files under .idea/libraries in case they are generated from Gradle project.
+# user dictionaries folder (to avoid conflicts if another developer has the same name).
+gradle.xml
+
+# For the legacy project format (.ipr/.iml/.iws files)
+# don't share the .iws file, since it stores user specific settings.
+*.iws
