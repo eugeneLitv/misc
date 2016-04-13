@@ -1,0 +1,11 @@
+#
+# Files, directories I want to deleted with
+# 'git clean -ndX'
+#
+# Output directories (out, target, etc)
+# should be cleaned with 'mvn clean'
+# that is why they are not here
+#
+!*
+**/.idea/
+*.???~
