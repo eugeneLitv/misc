@@ -2,6 +2,11 @@ package com.acme.bankapp;
 
 import java.util.Random;
 
+import org.pmw.tinylog.Configurator;
+import org.pmw.tinylog.writers.ConsoleWriter;
+import org.pmw.tinylog.Level;
+import org.pmw.tinylog.Logger;
+
 /**
  * Created with IntelliJ IDEA.
  * User: eugeneL
@@ -11,16 +16,19 @@ import java.util.Random;
 public class BankApplication {
 
     public static void main(String args[]) {
-        System.out.println("Bank Application");
+        Configurator.currentConfig().writer(new ConsoleWriter())
+                                    .level(Level.INFO)
+                                    .formatPattern("{message}").activate();
+        Logger.info("Bank Application");
         BankApplication app = new BankApplication();
         Bank bank = new Bank();
         app.test(bank);
     }
     public void initialize(Bank b) {
-        System.out.println("========== initialize begin ==========");
+        Logger.info("========== initialize begin ==========");
         Random r = new Random();
         int numberOfClients = r.nextInt(6);
-        System.out.println("numberOfClients; " + numberOfClients);
+        Logger.info("numberOfClients; {}", numberOfClients);
         float initialOverdraft;// = 200f + r.nextInt(200);
         int numberOfAccounts;
         Client c;
@@ -32,25 +40,25 @@ public class BankApplication {
                 c = b.addClient(new Client("Client " + i, initialOverdraft));
             }
             numberOfAccounts = r.nextInt(10);
-            System.out.println("Client: \"" + i + "\" numberOfAccounts: " + numberOfAccounts);
+            Logger.info("Client: \"{}\" numberOfAccounts: {}", i,  numberOfAccounts);
             for (int j = 0; j < numberOfAccounts; j++) {
                 if (!c.createAccount(r.nextBoolean() ? AccountTypes.SAVING : AccountTypes.CHECKING).deposit(1000f + r.nextInt(1000))) {
-                    System.out.println("Cannot initially deposit account number: " + j);
+                    Logger.info("Cannot initially deposit account number: {}", j);
                 }
             }
         }
         b.addClient(new Client()).createAccount(AccountTypes.SAVING).deposit(1000f);
         b.addClient(new Client(500f)).createAccount(AccountTypes.CHECKING).deposit(1000f);
-        System.out.println("========== initialize end ==========");
+        Logger.info("========== initialize end ==========");
     }
     public void printBankReport(Bank b) {
-        System.out.println("========== printBankReport ==========");
+        Logger.info("========== printBankReport ==========");
         if (b != null) {
             b.printReport();
         }
     }
     public void modifyBank(Bank b) {
-        System.out.println("========== modifyBank =========");
+        Logger.info("========== modifyBank =========");
         /**
          * Create some new accounts
          */
@@ -60,7 +68,7 @@ public class BankApplication {
          * Withdraw
          */
         b.getClients().stream().filter(c -> c.getAccounts() != null).forEach(c -> {
-            System.out.print("Client: " + c.getName() + " :");
+            Logger.info("Client: {}:", c.getName());
             c.withdraw(1800f);
         });
         /**
