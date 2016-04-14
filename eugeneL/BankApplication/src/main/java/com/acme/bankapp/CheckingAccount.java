@@ -6,6 +6,8 @@
  */
 package com.acme.bankapp;
 
+import org.pmw.tinylog.Logger;
+
 class CheckingAccount extends AbstractAccount {
     private final static AccountTypes type = AccountTypes.CHECKING;
     private float overdraft = 0;
@@ -16,7 +18,7 @@ class CheckingAccount extends AbstractAccount {
 
     @Override
     public void printReport() {
-        System.out.println(type.getAccountTypeName() + " Balance: " + balance + " Overdraft: " + overdraft);
+        Logger.info("{} Balance: {} Overdraft: {}", type.getAccountTypeName(), balance, overdraft);
     }
 
     @Override
@@ -27,12 +29,12 @@ class CheckingAccount extends AbstractAccount {
     @Override
     public boolean deposit(float x) {
         if (x <= 0) {
-            System.out.println("Cannot deposit zero or negative funds");
+            Logger.info("Cannot deposit zero or negative funds");
             return false;
         }
         if (balance > Float.MAX_VALUE - x) {
             /* overflow: balance + x > Float.MAX_VALUE */
-            System.out.println("Balance overflow. You are incredibly rich.");
+            Logger.info("Balance overflow. You are incredibly rich.");
             return false;
         }
 
@@ -43,15 +45,14 @@ class CheckingAccount extends AbstractAccount {
     @Override
     public boolean withdraw(float x) {
         if (x <= 0) {
-            System.out.println("Cannot withdraw zero or negative funds");
+            Logger.info("Cannot withdraw zero or negative funds");
             return false;
         }
 
         if (balance < (-Float.MAX_VALUE + x) ) {
             /* underflow: balance - x < -Float.MAX_VALUE */
-            System.out.println("Balance underflow. You are incredibly trusted and lucky.");
-            System.out.println("balance: " + balance
-                              + "\nx: " + x);
+            Logger.info("Balance underflow. You are incredibly trusted and lucky.");
+            Logger.info("balance: {}\nx: {}", balance, x);
             return false;
         }
 
@@ -64,13 +65,13 @@ class CheckingAccount extends AbstractAccount {
              * both positive and overdraft + newBalance > Float.MAX_VALUE
              * both negative and overdraft + newBalance < -Float.MAX_VALUE
              */
-            System.out.println("NewBalance underflow. You are incredibly trusted and lucky.");
-            System.out.println("balance: " + balance + "\nnewBalance: " + newBalance);
+            Logger.info("NewBalance underflow. You are incredibly trusted and lucky.\nbalance: {}\nnewBalance: {}",
+                         balance, newBalance);
             return false;
         }
 
         if (overdraft + newBalance < 0) {
-            System.out.println("Non-sufficient funds to withdraw " + x + " ...");
+            Logger.info("Non-sufficient funds to withdraw {} ...", x);
             return false;
         }
         balance = newBalance;
@@ -79,7 +80,7 @@ class CheckingAccount extends AbstractAccount {
 
     boolean setOverdraft(float x) {
         if (x < 0) {
-            System.out.println("Overdraft cannot be negative: " + x);
+            Logger.info("Overdraft cannot be negative: {}", x);
             return false;
         }
         overdraft = x;
