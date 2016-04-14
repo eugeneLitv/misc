@@ -6,6 +6,8 @@ package com.acme.bankapp;
  * Date: 26/03/16
  * Time: 18:49
  */
+import org.pmw.tinylog.Logger;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -20,13 +22,13 @@ class Bank implements Report {
         }
     }
     public void printReport() {
-        System.out.println("=== Bank Report ===");
-        System.out.println("Name: " + name);
+        Logger.info("=== Bank Report ===");
+        Logger.info("Name: {}", name);
         if ( clients != null && !clients.isEmpty() ) {
-            System.out.println("Number of Clients: " + clients.size());
+            Logger.info("Number of Clients: {}", clients.size());
             clients.forEach(Client::printReport);
         } else {
-            System.out.println("The bank has no any clients.");
+            Logger.info("The bank has no any clients.");
         }
     }
 
@@ -40,7 +42,7 @@ class Bank implements Report {
             }
             clients.add(c);
         } else {
-            System.out.println("Can not add empty client");
+            Logger.info("Can not add empty client");
         }
         return c;
     }
