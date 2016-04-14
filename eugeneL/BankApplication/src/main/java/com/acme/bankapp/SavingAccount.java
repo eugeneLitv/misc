@@ -1,5 +1,7 @@
 package com.acme.bankapp;
 
+import org.pmw.tinylog.Logger;
+
 /**
  * Created with IntelliJ IDEA 2016.1.
  * User: eugeneL
@@ -15,7 +17,7 @@ class SavingAccount extends AbstractAccount {
 
     @Override
     public void printReport() {
-        System.out.println(type.getAccountTypeName() + " Balance: " + balance);
+        Logger.info("{} Balance: {}", type.getAccountTypeName(), balance);
     }
 
     @Override
@@ -35,7 +37,7 @@ class SavingAccount extends AbstractAccount {
             balance = balance - x;
             return true;
         }
-        System.out.println("Non-sufficient funds to withdraw " + x + " ...");
+        Logger.info("Non-sufficient funds to withdraw {} ...", x);
         return false;
     }
 }
