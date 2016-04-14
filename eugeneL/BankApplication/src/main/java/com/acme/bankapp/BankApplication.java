@@ -14,11 +14,43 @@ import org.pmw.tinylog.Logger;
  * Time: 18:49
  */
 public class BankApplication {
+    private static final Level[] logLevels = {
+        Level.OFF,
+        Level.ERROR,
+        Level.WARNING,
+        Level.INFO,
+        Level.DEBUG,
+        Level.TRACE
+    };
+    private static final Level defaultLogLevel = Level.INFO;
 
     public static void main(String args[]) {
-        Configurator.currentConfig().writer(new ConsoleWriter())
-                                    .level(Level.INFO)
-                                    .formatPattern("{message}").activate();
+
+        Configurator logConfig = Configurator.currentConfig();
+        logConfig.level(defaultLogLevel).formatPattern("{message}").activate();
+
+        switch (args.length) {
+            case 0:
+                logConfig.level(Level.INFO);
+                break;
+            case 2:
+                try {
+                    if ( "-d".equals(args[0]) ) {
+                        int lvl = Integer.parseInt(args[1]);
+
+                        logConfig.level(logLevels[lvl]);
+                        Logger.info("Set log level: {}", logLevels[lvl]);
+                        logConfig.activate();
+                        break;
+                    }
+                } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {}
+             default:
+                logConfig.level(Level.INFO).activate();
+                Logger.warn("ERROR: Wrong arguments: \"{}\"", String.join(" ", args));
+                Logger.warn("       Usage: {} [-d {1-{}}]", BankApplication.class.getName(), logLevels.length - 1);
+                System.exit(1);
+        }
+
         Logger.info("Bank Application");
         BankApplication app = new BankApplication();
         Bank bank = new Bank();
