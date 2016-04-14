@@ -6,7 +6,9 @@
  */
 package com.acme.bankapp;
 
-import java.util.*;
+import org.pmw.tinylog.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 class Client implements Report {
     private final static String defaultName = "Unnamed Client";
@@ -25,7 +27,7 @@ class Client implements Report {
     }
     public Client(String n) {
         if (n == null) {
-            System.out.println("Client Name can not be null. Set Client Name to default \"" + defaultName + "\"");
+            Logger.info("Client Name can not be null. Set Client Name to default \"{}\"", defaultName);
             name = defaultName;
             return;
         }
@@ -37,9 +39,9 @@ class Client implements Report {
 
     @Override
     public void printReport() {
-        System.out.println("=== Client Report ===");
-        System.out.println("Name: " + name);
-        System.out.println("initialOverdraft: " + initialOverdraft);
+        Logger.info("=== Client Report ===");
+        Logger.info("Name: {}", name);
+        Logger.info("initialOverdraft: {}", initialOverdraft);
         if ( accounts != null && !accounts.isEmpty() ) {
             int num = 0,
                 numChecking = 0,
@@ -53,14 +55,14 @@ class Client implements Report {
                     numSaving++;
                 }
             }
-            System.out.println("Total accounts: " + num);
-            System.out.println("Number of Saving Accounts: " + numSaving);
-            System.out.println("Number of Checking Accounts: " + numChecking);
-            System.out.println("Total Balance: " + getBalance());
-            System.out.println("Accounts:");
+            Logger.info("Total accounts: {}", num);
+            Logger.info("Number of Saving Accounts: {}", numSaving);
+            Logger.info("Number of Checking Accounts: {}", numChecking);
+            Logger.info("Total Balance: {}", getBalance());
+            Logger.info("Accounts:");
             accounts.forEach(Account::printReport);
         } else {
-            System.out.println("The client has no any accounts.");
+            Logger.info("The client has no any accounts.");
         }
     }
 
@@ -97,7 +99,7 @@ class Client implements Report {
         } else if (accountType == AccountTypes.SAVING) {
             a = new SavingAccount();
         } else {
-            System.out.println("Unknown account type: \"" + accountType + "\"");
+            Logger.info("Unknown account type: \"{}\"", accountType);
             return null;
         }
         if (accounts == null) {
