@@ -1,0 +1,8 @@
+#
+# Output directories (out, target, etc)
+# should be cleaned with 'mvn clean'
+#
+!*
+**/.idea/
+**/target/
+*.???~
