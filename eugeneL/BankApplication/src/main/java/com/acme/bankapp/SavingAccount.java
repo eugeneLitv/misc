@@ -17,7 +17,7 @@ class SavingAccount extends AbstractAccount {
 
     @Override
     public void printReport() {
-        Logger.info("{} Balance: {}", type.getAccountTypeName(), balance);
+        Logger.info("{} Balance: {}", type, balance);
     }
 
     @Override

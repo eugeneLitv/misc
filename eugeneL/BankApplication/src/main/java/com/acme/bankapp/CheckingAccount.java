@@ -18,7 +18,7 @@ class CheckingAccount extends AbstractAccount {
 
     @Override
     public void printReport() {
-        Logger.info("{} Balance: {} Overdraft: {}", type.getAccountTypeName(), balance, overdraft);
+        Logger.info("{} Balance: {} Overdraft: {}", type, balance, overdraft);
     }
 
     @Override

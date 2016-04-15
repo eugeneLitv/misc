@@ -10,12 +10,12 @@ public class AccountTest {
 
     @Test
     public void checkAccountTypeNameCHECKING() {
-        assertEquals("Checking", AccountTypes.CHECKING.getAccountTypeName());
+        assertEquals("CHECKING", AccountTypes.CHECKING.toString());
     }
 
     @Test
     public void checkAccountTypeNameSAVING() {
-        assertEquals("Saving", AccountTypes.SAVING.getAccountTypeName());
+        assertEquals("SAVING", AccountTypes.SAVING.toString());
     }
 
     @Test
@@ -55,5 +55,12 @@ public class AccountTest {
         assertTrue("Checking Account id out of range",
                 a.getAccountId() <= upper_limit
              && a.getAccountId() >= lower_limit);
+    }
+
+    @Test
+    public void enumerateAccountTypes() {
+       for(AccountTypes account: AccountTypes.values()){
+           System.out.println("Account Type: " + account);
+       }
     }
 }
