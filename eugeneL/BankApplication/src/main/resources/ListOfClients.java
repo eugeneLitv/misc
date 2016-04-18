@@ -3,6 +3,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public enum ListOfClients {
   CLIENT1("0f02f640-0998-48af-81eb-062f7c3ed9da", "FOOBAR", 1, 100f
@@ -120,7 +121,8 @@ public enum ListOfClients {
 
   public static void main(String args[]) {
 
-    Gson gson = new Gson();
+    //Gson gson = new Gson();
+    Gson gson = new GsonBuilder().serializeNulls().create();
     String json;
     for (ListOfClients c : ListOfClients.values()) {
       //UUID u = UUID.randomUUID();
@@ -134,7 +136,7 @@ public enum ListOfClients {
         for (Account a : c.ListOfAccount) {
           json = gson.toJson(a);
           System.out.printf("JSON: %s\n", json);
-          a.printReport();
+          //a.printReport();
         }
       }
     }
