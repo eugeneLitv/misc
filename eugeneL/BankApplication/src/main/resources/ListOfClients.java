@@ -2,6 +2,7 @@ import java.util.UUID;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+import com.google.gson.Gson;
 
 public enum ListOfClients {
   CLIENT1("0f02f640-0998-48af-81eb-062f7c3ed9da", "FOOBAR", 1, 100f
@@ -118,17 +119,27 @@ public enum ListOfClients {
   }
 
   public static void main(String args[]) {
+
+    Gson gson = new Gson();
+    String json;
     for (ListOfClients c : ListOfClients.values()) {
       //UUID u = UUID.randomUUID();
       //System.out.println("UUID: " + u.toString());
+
       System.out.printf("id: %s name: %10s aA: %s initO: %.2f\n",
                          c.id, c.name, c.activeAccount, c.initialOverdraft
                         );
 
       if (c.ListOfAccount != null) {
-        c.ListOfAccount.forEach(Account::printReport);
+        for (Account a : c.ListOfAccount) {
+          json = gson.toJson(a);
+          System.out.printf("JSON: %s\n", json);
+          a.printReport();
+        }
       }
     }
+    //String json = gson.toJson(ListOfClients.class);
+    //System.out.println(json);
     // Generate UUIDs
     /*for (int i = 0; i < 40; i++) { System.out.println(UUID.randomUUID()); }*/
   }
