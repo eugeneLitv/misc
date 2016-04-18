@@ -3,45 +3,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-enum AccountTypes {CHECKING, SAVING;}
-
-interface Account {
-  UUID getId();
-  void printReport();
-}
-
-class AccountC implements Account {
-  private final UUID         id;
-  private final AccountTypes type = AccountTypes.CHECKING;
-  private       float        balance;
-  private       float        overdraft;
-
-  public AccountC(String id, float balance, float overdraft) {
-    this.id        = UUID.fromString(id);
-    this.balance   = balance;
-    this.overdraft = overdraft;
-  }
-  public UUID getId() {return id;}
-  public void printReport() {
-    System.out.printf("     accid: %s type: %8s bal: %6.2f, over: %4.2f\n", id, type, balance, overdraft);
-  }
-}
-
-class AccountS implements Account {
-  private final UUID         id;
-  private final AccountTypes type = AccountTypes.SAVING;
-  private       float        balance;
-
-  public AccountS(String id, float balance) {
-    this.id        = UUID.fromString(id);
-    this.balance   = balance;
-  }
-  public UUID getId() {return id;}
-  public void printReport() {
-    System.out.printf("     accid: %s type: %8s bal: %6.2f\n", id, type, balance);
-  }
-}
-
 public enum ListOfClients {
   CLIENT1("0f02f640-0998-48af-81eb-062f7c3ed9da", "FOOBAR", 1, 100f
          , new ArrayList<Account>(Arrays.asList(
@@ -101,6 +62,46 @@ public enum ListOfClients {
              , new AccountS("1df0b377-5e18-466c-ae28-4be1c8212097", 1234f)
          )))
          ;
+
+  static enum AccountTypes {CHECKING, SAVING;}
+
+  static interface Account {
+    UUID getId();
+    void printReport();
+  }
+
+  static class AccountC implements Account {
+    private final UUID         id;
+    private final AccountTypes type = AccountTypes.CHECKING;
+    private       float        balance;
+    private       float        overdraft;
+
+    public AccountC(String id, float balance, float overdraft) {
+      this.id        = UUID.fromString(id);
+      this.balance   = balance;
+      this.overdraft = overdraft;
+    }
+    public UUID getId() {return id;}
+    public void printReport() {
+      System.out.printf("     accid: %s type: %8s bal: %6.2f, over: %4.2f\n", id, type, balance, overdraft);
+    }
+  }
+
+  static class AccountS implements Account {
+    private final UUID         id;
+    private final AccountTypes type = AccountTypes.SAVING;
+    private       float        balance;
+
+    public AccountS(String id, float balance) {
+      this.id        = UUID.fromString(id);
+      this.balance   = balance;
+    }
+    public UUID getId() {return id;}
+    public void printReport() {
+      System.out.printf("     accid: %s type: %8s bal: %6.2f\n", id, type, balance);
+    }
+  }
+
   private final UUID          id;
   private final String        name;
   private final UUID          activeAccount;
