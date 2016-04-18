@@ -80,5 +80,9 @@ public enum ListOfClients {
 
       c.ListOfAccount.forEach(Account::printReport);
     }
+    // Generate UUIDs
+    for (int i = 0; i < 10; i++) {
+      System.out.println(UUID.randomUUID());
+    }
   }
 }
