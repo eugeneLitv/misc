@@ -2,8 +2,15 @@ import java.util.UUID;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import java.lang.reflect.Type;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSerializer;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
 
 public enum ListOfClients {
   CLIENT1("0f02f640-0998-48af-81eb-062f7c3ed9da", "FOOBAR", 1, 100f
@@ -70,6 +77,7 @@ public enum ListOfClients {
   static interface Account {
     UUID getId();
     void printReport();
+    JsonObject getAsJson();
   }
 
   static class AccountC implements Account {
@@ -87,6 +95,14 @@ public enum ListOfClients {
     public void printReport() {
       System.out.printf("     accid: %s type: %8s bal: %6.2f, over: %4.2f\n", id, type, balance, overdraft);
     }
+    public JsonObject getAsJson() {
+      final JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("id",        this.id.toString());
+        jsonObject.addProperty("type",      this.type.toString());
+        jsonObject.addProperty("balance",   this.balance);
+        jsonObject.addProperty("overdraft", this.overdraft);
+        return jsonObject;
+    }
   }
 
   static class AccountS implements Account {
@@ -101,6 +117,13 @@ public enum ListOfClients {
     public UUID getId() {return id;}
     public void printReport() {
       System.out.printf("     accid: %s type: %8s bal: %6.2f\n", id, type, balance);
+    }
+    public JsonObject getAsJson() {
+      final JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("id",        this.id.toString());
+        jsonObject.addProperty("type",      this.type.toString());
+        jsonObject.addProperty("balance",   this.balance);
+        return jsonObject;
     }
   }
 
@@ -119,29 +142,48 @@ public enum ListOfClients {
     this.ListOfAccount    = accs;
   }
 
+  private JsonObject getAsJson() {
+    final JsonObject jsonObject = new JsonObject();
+    //The serialisation code is missing
+
+    jsonObject.addProperty("id", id.toString());
+    jsonObject.addProperty("name", name);
+    jsonObject.addProperty("activeAccount", activeAccount != null ? activeAccount.toString() : null);
+    jsonObject.addProperty("initialOverdraft", initialOverdraft);
+
+
+    if (ListOfAccount != null) {
+      final JsonArray jsonAccountArray = new JsonArray();
+      for (final Account a : ListOfAccount) {
+        final JsonObject jsonAccount = a.getAsJson();
+        jsonAccountArray.add(jsonAccount);
+      }
+      jsonObject.add("ListOfAccount", jsonAccountArray);
+    } else {
+      jsonObject.add("ListOfAccount", null);
+    }
+
+
+    return jsonObject;
+  }
+
   public static void main(String args[]) {
 
-    //Gson gson = new Gson();
-    Gson gson = new GsonBuilder().serializeNulls().create();
-    String json;
+    final GsonBuilder gsonBuilder = new GsonBuilder();
+    gsonBuilder.setPrettyPrinting();
+    final Gson gson = gsonBuilder.serializeNulls().create();
+
+    final JsonObject jsonObject = new JsonObject();
+    final JsonArray jsonClientArray = new JsonArray();
+    jsonObject.add("ListOfClients", jsonClientArray);
+
     for (ListOfClients c : ListOfClients.values()) {
-      //UUID u = UUID.randomUUID();
-      //System.out.println("UUID: " + u.toString());
-
-      System.out.printf("id: %s name: %10s aA: %s initO: %.2f\n",
-                         c.id, c.name, c.activeAccount, c.initialOverdraft
-                        );
-
-      if (c.ListOfAccount != null) {
-        for (Account a : c.ListOfAccount) {
-          json = gson.toJson(a);
-          System.out.printf("JSON: %s\n", json);
-          //a.printReport();
-        }
-      }
+      jsonClientArray.add(c.getAsJson());
     }
-    //String json = gson.toJson(ListOfClients.class);
-    //System.out.println(json);
+
+    String json;
+    json = gson.toJson(jsonObject);
+    System.out.println(json);
     // Generate UUIDs
     /*for (int i = 0; i < 40; i++) { System.out.println(UUID.randomUUID()); }*/
   }
