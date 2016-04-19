@@ -1,10 +1,9 @@
 package com.acme.bankapp;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.UUID;
 
 abstract class AbstractAccount implements Report, Account {
-    private long id;
+    private final UUID id;
     protected float balance;
 
     /**
@@ -14,18 +13,11 @@ abstract class AbstractAccount implements Report, Account {
      *      per second. It is the limit of my realization.
      */
     AbstractAccount() {
-        GregorianCalendar c = new GregorianCalendar();
-        id =
-            (c.get(Calendar.YEAR)        * 100_00_00_00_00_000l) +
-            ((c.get(Calendar.MONTH) + 1) * 100_00_00_00_000l) +
-            (c.get(Calendar.DAY_OF_MONTH)* 100_00_00_000l) +
-            (c.get(Calendar.HOUR_OF_DAY) * 100_00_000l) +
-            (c.get(Calendar.MINUTE)      * 100_000l) +
-            (c.get(Calendar.SECOND)      * 1000l) +
-            c.get(Calendar.MILLISECOND);
+        this(UUID.randomUUID());
+    }
+    AbstractAccount(UUID accountId) {
+        id = accountId;
     }
 
-    public long getAccountId() {
-        return id;
-    }
+    public UUID getId() { return id; }
 }
