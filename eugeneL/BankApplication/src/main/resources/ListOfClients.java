@@ -144,25 +144,20 @@ public enum ListOfClients {
 
   private JsonObject getAsJson() {
     final JsonObject jsonObject = new JsonObject();
-    //The serialisation code is missing
+    final JsonArray jsonAccountArray = new JsonArray(); // either accounts list or empty array
 
+    //The serialisation code
     jsonObject.addProperty("id", id.toString());
     jsonObject.addProperty("name", name);
     jsonObject.addProperty("activeAccount", activeAccount != null ? activeAccount.toString() : null);
     jsonObject.addProperty("initialOverdraft", initialOverdraft);
 
-
     if (ListOfAccount != null) {
-      final JsonArray jsonAccountArray = new JsonArray();
       for (final Account a : ListOfAccount) {
-        final JsonObject jsonAccount = a.getAsJson();
-        jsonAccountArray.add(jsonAccount);
+        jsonAccountArray.add(a.getAsJson());
       }
-      jsonObject.add("ListOfAccount", jsonAccountArray);
-    } else {
-      jsonObject.add("ListOfAccount", null);
     }
-
+    jsonObject.add("ListOfAccount", jsonAccountArray);
 
     return jsonObject;
   }
