@@ -10,11 +10,10 @@ import org.pmw.tinylog.Logger;
 
 class CheckingAccount extends AbstractAccount {
     private final static AccountTypes type = AccountTypes.CHECKING;
+
     private float overdraft = 0;
 
-    public AccountTypes getType() {
-        return type;
-    }
+    public AccountTypes getType() { return type; }
 
     @Override
     public void printReport() {
