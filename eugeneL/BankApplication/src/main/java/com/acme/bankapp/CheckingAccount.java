@@ -16,6 +16,10 @@ class CheckingAccount extends AbstractAccount {
 
     public CheckingAccount() {}
     public CheckingAccount(UUID accountId) { super(accountId); }
+    public CheckingAccount(UUID accountId, float overdraft) {
+        super(accountId);
+        setOverdraft(overdraft);
+    }
 
     @Override
     public AccountTypes getType() { return type; }
@@ -82,16 +86,16 @@ class CheckingAccount extends AbstractAccount {
         return true;
     }
 
-    boolean setOverdraft(float x) {
+    public boolean setOverdraft(float x) {
         if (x < 0) {
-            Logger.info("Overdraft cannot be negative: {}", x);
+            Logger.warn("Overdraft cannot be negative: {}", x);
             return false;
         }
         overdraft = x;
         return true;
     }
 
-    float getOverdraft() {
+    public float getOverdraft() {
         return overdraft;
     }
 }
