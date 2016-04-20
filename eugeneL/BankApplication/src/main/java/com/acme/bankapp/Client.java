@@ -7,19 +7,23 @@
 package com.acme.bankapp;
 
 import org.pmw.tinylog.Logger;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.UUID;
 
 class Client implements Report {
 
     private final UUID          id;
-    private final List<Account> accounts = new ArrayList<>();
+    private final Map<UUID, Account> accounts = new HashMap<>();
 
     private String name;
     private UUID   activeAccount = null;
     private float  initialOverdraft = 300f;
 
+    public Client() {
+        this(UUID.randomUUID());
+    }
     public Client(UUID clientId) {
         id = clientId;
     }
@@ -66,8 +70,15 @@ class Client implements Report {
         }
     }
 
-    public UUID setActiveAccount(UUID pAccountId) {
-        activeAccount = pAccountId;
+    public UUID setActiveAccount(UUID AccountId) {
+        if (accounts.containsKey(AccountId)) {
+            activeAccount = AccountId;
+            return activeAccount;
+        } else {
+            Logger.warn("The client (id: {}, name {}) has no account with id: {}.",
+                getId(), getName(), AccountId);
+            return null;
+        }
     }
 
     public float getBalance() {
@@ -78,7 +89,7 @@ class Client implements Report {
         return totalBalance;
     }
 
-    public List<Account> getAccounts() { return accounts; }
+    public Map<UUID, Account> getAccounts() { return accounts; }
 
     public boolean deposit(float x) {
         Account account = getActiveAccount();
@@ -102,11 +113,10 @@ class Client implements Report {
             Logger.info("Unknown account type: \"{}\"", accountType);
             return null;
         }
-        if (accounts == null) {
-            accounts = new ArrayList<Account>();
-            activeAccount = a; // when the very first account is added set activeAccount to it
+        if (accounts.isEmpty()) {
+            activeAccount = a.getId(); // when the very first account is added set activeAccount to it
         }
-        accounts.add(a);
+        accounts.put(a.getId(), a);
         return a;
     }
 
@@ -128,7 +138,7 @@ class Client implements Report {
         int  numOfAccounts = 0;
         Account account = null;
 
-        if (accounts == null || accounts.isEmpty()) return null;
+        if (accounts.isEmpty()) return null;
 
         for (Account a : accounts) {
             if (a.getId() == accountId) {
