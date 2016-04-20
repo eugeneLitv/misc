@@ -1,6 +1,7 @@
 package com.acme.bankapp;
 
 import org.pmw.tinylog.Logger;
+import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA 2016.1.
@@ -9,8 +10,12 @@ import org.pmw.tinylog.Logger;
  * Time: 18:49
  */
 class SavingAccount extends AbstractAccount {
-    private final static AccountTypes type = AccountTypes.SAVING;
+    private static final AccountTypes type = AccountTypes.SAVING;
 
+    public SavingAccount() {}
+    public SavingAccount(UUID accountId) { super(accountId); }
+
+    @Override
     public AccountTypes getType() {
         return type;
     }

@@ -7,12 +7,17 @@
 package com.acme.bankapp;
 
 import org.pmw.tinylog.Logger;
+import java.util.UUID;
 
 class CheckingAccount extends AbstractAccount {
-    private final static AccountTypes type = AccountTypes.CHECKING;
+    private static final AccountTypes type = AccountTypes.CHECKING;
 
     private float overdraft = 0;
 
+    public CheckingAccount() {}
+    public CheckingAccount(UUID accountId) { super(accountId); }
+
+    @Override
     public AccountTypes getType() { return type; }
 
     @Override
