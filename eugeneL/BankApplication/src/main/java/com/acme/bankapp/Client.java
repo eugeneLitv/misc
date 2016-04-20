@@ -7,7 +7,6 @@
 package com.acme.bankapp;
 
 import org.pmw.tinylog.Logger;
-import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.UUID;
@@ -46,12 +45,12 @@ class Client implements Report {
         Logger.info("=== Client Report ===");
         Logger.info("Client Id: {} Name: {}", id, name);
         Logger.info("initialOverdraft: {}", initialOverdraft);
-        if ( accounts != null && !accounts.isEmpty() ) {
+        if ( !accounts.isEmpty() ) {
             int num = 0,
                 numChecking = 0,
                 numSaving = 0;
 
-            for (Account a: accounts) {
+            for (Account a : accounts.values()) {
                 num++;
                 if (a instanceof CheckingAccount) {
                     numChecking++;
@@ -64,7 +63,7 @@ class Client implements Report {
             Logger.info("Number of Checking Accounts: {}", numChecking);
             Logger.info("Total Balance: {}", getBalance());
             Logger.info("Accounts:");
-            accounts.stream().forEach(Account::printReport);
+            accounts.values().stream().forEach(Account::printReport);
         } else {
             Logger.info("The client has no any accounts.");
         }
@@ -83,8 +82,9 @@ class Client implements Report {
 
     public float getBalance() {
         float totalBalance = 0;
-        if (accounts != null && !accounts.isEmpty()) {
-            for (Account a : accounts) totalBalance += a.getBalance();
+
+        if ( !accounts.isEmpty() ) {
+            for (Account a : accounts.values()) totalBalance += a.getBalance();
         }
         return totalBalance;
     }
@@ -101,58 +101,36 @@ class Client implements Report {
         return (account != null) && account.withdraw(x);
     }
 
-    public Account createAccount(AccountTypes accountType) {
-        Account a;
-        if (accountType == AccountTypes.CHECKING) {
-            CheckingAccount ca = new CheckingAccount();
-            ca.setOverdraft(initialOverdraft);
-            a = ca;
-        } else if (accountType == AccountTypes.SAVING) {
-            a = new SavingAccount();
-        } else {
-            Logger.info("Unknown account type: \"{}\"", accountType);
+    public Account createAccount(UUID accountId, AccountTypes accountType) {
+        Account account = null;
+        if (accounts.containsKey(accountId)) {
+           Logger.warn("The client (id: {}, name {}) already has this account id: {}.",
+                getId(), getName(), accountId);
             return null;
         }
-        if (accounts.isEmpty()) {
-            activeAccount = a.getId(); // when the very first account is added set activeAccount to it
+        switch (accountType) {
+            case CHECKING:
+                account = accounts.put(accountId, new CheckingAccount(accountId, initialOverdraft));
+                break;
+            case SAVING:
+                account = accounts.put(accountId, new SavingAccount(accountId));
+                break;
+            default:
+                Logger.warn("Unknown account type: \"{}\"", accountType);
         }
-        accounts.put(a.getId(), a);
-        return a;
+        return account;
+    }
+    public Account createAccount(AccountTypes accountType) {
+        UUID accountId = UUID.randomUUID();
+        return createAccount(accountId, accountType);
     }
 
     public String getName() { return name; }
     public UUID   getId() { return id; }
     public float  getInitialOverdraft() { return initialOverdraft; }
 
-  /**
-   * We can get zero, one or more than one account,
-   * but the function can return only null or Account.
-   * So it is impossible to distinguish all these three cases.
-   * Either "public Account[] getAccountsById(...)"
-   * or modify the List "private final List<Account> accounts = new ArrayList<>();"
-   *
-   * @param accountId
-   * @return
-   */
     public Account getAccountById(UUID accountId) {
-        int  numOfAccounts = 0;
-        Account account = null;
-
-        if (accounts.isEmpty()) return null;
-
-        for (Account a : accounts) {
-            if (a.getId() == accountId) {
-                account = a;
-                numOfAccounts++;
-            }
-        }
-        if (numOfAccounts != 0 && numOfAccounts != 1) {
-            // More than one account with the same ID.
-            Logger.warn("The client (id: {}, name {}) has {} accounts with the same id ({}).",
-                         getId(), getName(), numOfAccounts, accountId);
-            return null;
-        }
-        return account;
+        return accounts.get(accountId);
     }
     public Account getActiveAccount() {
         if (accounts == null) {
