@@ -20,21 +20,24 @@ class Client implements Report {
     private UUID   activeAccount = null;
     private float  initialOverdraft = 300f;
 
-    public Client() {
-        this(UUID.randomUUID());
-    }
+    public Client() { this(null, null); }
     public Client(UUID clientId) {
-        id = clientId;
+        id = (clientId == null ? UUID.randomUUID() : clientId);
     }
-    public Client(UUID clientId, String clientName, float defaultOverdraft) {
-        this(clientId);
+    public Client(String clientName, float defaultOverdraft) {
+        this();
         name = clientName;
         initialOverdraft = defaultOverdraft;
     }
-    public Client(UUID clientId, String clientName) {
-        this(clientId);
+    public Client(UUID clientId, String clientName, float defaultOverdraft) {
+        id = (clientId == null ? UUID.randomUUID() : clientId);
         name = clientName;
+        initialOverdraft = defaultOverdraft;
     }
+    //public Client(UUID clientId, String clientName) {
+    //    this(clientId, clientName);
+    //    setInitialOverdraft(initialOverdraft);
+    //}
     public Client(UUID clientId, float defaultOverdraft) {
         this(clientId);
         initialOverdraft = defaultOverdraft;
@@ -128,6 +131,10 @@ class Client implements Report {
     public String getName() { return name; }
     public UUID   getId() { return id; }
     public float  getInitialOverdraft() { return initialOverdraft; }
+    public float  setInitialOverdraft(float overdraft) {
+        initialOverdraft = overdraft;
+        return initialOverdraft;
+    }
 
     public Account getAccountById(UUID accountId) {
         return accounts.get(accountId);
