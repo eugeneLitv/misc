@@ -13,34 +13,36 @@ import java.util.UUID;
 
 class Client implements Report {
 
-    private final UUID          id;
+    private final UUID               id;
     private final Map<UUID, Account> accounts = new HashMap<>();
 
     private String name;
     private UUID   activeAccount = null;
     private float  initialOverdraft = 300f;
 
-    public Client() { this(null, null); }
-    public Client(UUID clientId) {
-        id = (clientId == null ? UUID.randomUUID() : clientId);
+    // new Client(name)
+    // new Client(name, overdraft)
+    // new Client(id, name)
+    // new Client(id, name, overdraft)
+
+    public Client(String clientName) {
+        this(null, clientName);
     }
-    public Client(String clientName, float defaultOverdraft) {
-        this();
+    public Client(String clientName, float clientInitialOverdraft) throws Exception {
+        this(null, clientName, clientInitialOverdraft);
+    }
+    public Client(UUID clientId, String clientName) {
+        if (clientId != null) {id = clientId;}
+        else {id = UUID.randomUUID();}
         name = clientName;
-        initialOverdraft = defaultOverdraft;
     }
-    public Client(UUID clientId, String clientName, float defaultOverdraft) {
-        id = (clientId == null ? UUID.randomUUID() : clientId);
-        name = clientName;
-        initialOverdraft = defaultOverdraft;
-    }
-    //public Client(UUID clientId, String clientName) {
-    //    this(clientId, clientName);
-    //    setInitialOverdraft(initialOverdraft);
-    //}
-    public Client(UUID clientId, float defaultOverdraft) {
-        this(clientId);
-        initialOverdraft = defaultOverdraft;
+    public Client(UUID clientId, String clientName, float clientInitialOverdraft) throws Exception {
+        this(clientId, clientName);
+        if ( ! setInitialOverdraft(clientInitialOverdraft) ) {
+            String eMsg = "Create new client: Wrong clientInitialOverdraft: " + clientInitialOverdraft;
+            Logger.warn(eMsg);
+            throw new Exception(eMsg);
+        }
     }
 
     @Override
@@ -128,12 +130,13 @@ class Client implements Report {
         return createAccount(accountId, accountType);
     }
 
-    public String getName() { return name; }
-    public UUID   getId() { return id; }
-    public float  getInitialOverdraft() { return initialOverdraft; }
-    public float  setInitialOverdraft(float overdraft) {
+    public String  getName() { return name; }
+    public UUID    getId() { return id; }
+    public float   getInitialOverdraft() { return initialOverdraft; }
+    public boolean setInitialOverdraft(float overdraft) {
+        if (overdraft < 0) { return false; }
         initialOverdraft = overdraft;
-        return initialOverdraft;
+        return true;
     }
 
     public Account getAccountById(UUID accountId) {
