@@ -4,71 +4,144 @@
  */
 package com.acme.bankapp;
 
+import java.util.UUID;
+
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 
 public class ClientTest {
-    final static private float delta = 0.001f;
-    final static private float defaultOverdraft = 300f; // must be the same as in class Client
-    final static private String defaultClientName = "Unnamed Client"; // must be the same as in class Client
+    private static final float  delta = 0.001f;
+    private static final float  defaultOverdraft = 300f; // must be the same as in class Client
+    private static final String testClientName = "Test JUnit Client";
+    private static final float  testOverdraft = 100.34f;
+    private static final UUID   testId = UUID.fromString("12345678-abab-fdfe-9090-9876543210af");
+    private static final UUID   nullId = null;
+    private static final String nullName = null;
+    private static final float  wrongOverdraft = -1;
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    // Constructor Client(String clientName)
     @Test
-    public void createClientDefault() {
-        final Client client;
-
-        client = new Client();
-        assertEquals("Client(): Client Name incorrect", defaultClientName, client.getName());
-        assertEquals("Client(): initialOverdraft incorrect", defaultOverdraft, client.getInitialOverdraft(), delta);
-    }
-
-    @Test
-    public void createClientWithNameAndOverdraft() {
-        final String name = "Test Client Name";
-        final float initialOverdraft = 100.34f;
-        final Client client;
-
-        client = new Client(name, initialOverdraft);
-        assertEquals("Client(name, initialOverdraft): Client Name incorrect", name, client.getName());
-        assertEquals("Client(name, initialOverdraft): initialOverdraft incorrect", initialOverdraft, client.getInitialOverdraft(), delta);
-    }
-
-     @Test
     public void createClientWithName() {
-        final String name = "Test Client Name";
+        final String functionId = "Client(testClientName)";
         final Client client;
 
-        client = new Client(name);
-        assertEquals("Client(name): Client Name incorrect", name, client.getName());
-        assertEquals("Client(name): initialOverdraft incorrect", defaultOverdraft, client.getInitialOverdraft(), delta);
+        client = new Client(testClientName);
+        assertNotNull(functionId + "Client Id should not be null", client.getId());
+        assertEquals(functionId + "Client Name incorrect", testClientName, client.getName());
+        assertEquals(functionId + "initialOverdraft incorrect", defaultOverdraft,
+            client.getInitialOverdraft(), delta);
     }
-
-     @Test
-    public void createClientWithOverdraft() {
-        final float initialOverdraft = 100.34f;
-        final Client client;
-
-        client = new Client(initialOverdraft);
-        assertEquals("Client(initialOverdraft): Client Name incorrect", defaultClientName, client.getName());
-        assertEquals("Client(initialOverdraft): initialOverdraft incorrect", initialOverdraft, client.getInitialOverdraft(), delta);
-    }
-
     @Test
-    public void createClientNameIsNullWithOverdraft() {
-        final float initialOverdraft = 100.34f;
+    public void createClientWithNullName() {
+        final String functionId = "Client(nullName)";
         final Client client;
 
-        client = new Client(null, initialOverdraft);
-        assertEquals("Client(null, initialOverdraft): Client Name incorrect", defaultClientName, client.getName());
-        assertEquals("Client(null, initialOverdraft): initialOverdraft incorrect", initialOverdraft, client.getInitialOverdraft(), delta);
+        client = new Client(nullName);
+        assertNotNull(functionId + "Client Id should not be null", client.getId());
+        assertNull(functionId + "Client Name", client.getName());
+        assertEquals(functionId + "initialOverdraft incorrect", defaultOverdraft,
+            client.getInitialOverdraft(), delta);
     }
 
+    /**
+     * Constructor Client(String clientName, float clientInitialOverdraft) throws Exception
+     *  Variants:
+     * {not null, correct}, {not null, wrong}, {null, correct}, {null, wrong}
+     */
     @Test
-    public void createClientNameIsNull() {
+    public void createClientWithNameAndOverdraft() throws Exception {
+        final String functionId = "Client(testClientName, testOverdraft): ";
         final Client client;
 
-        client = new Client(null);
-        assertEquals("Client(initialOverdraft): Client Name incorrect", defaultClientName, client.getName());
-        assertEquals("Client(initialOverdraft): initialOverdraft incorrect", defaultOverdraft, client.getInitialOverdraft(), delta);
+        client = new Client(testClientName, testOverdraft);
+        assertNotNull(functionId + "Client Id should not be null", client.getId());
+        assertEquals(functionId + "Client Name incorrect",
+            testClientName, client.getName());
+        assertEquals(functionId + "initialOverdraft incorrect",
+            testOverdraft, client.getInitialOverdraft(), delta);
     }
+    @Test
+    public void createClientWithNameAndWrongOverdraft() throws Exception {
+        thrown.expect(Exception.class);
+        thrown.expectMessage("Create new client: Wrong Initial Overdraft: " + wrongOverdraft);
+        new Client(testClientName, wrongOverdraft);
+    }
+    @Test
+    public void createClientWithNullNameAndOverdraft() throws Exception {
+        final String functionId = "Client(nullName, testOverdraft): ";
+        final Client client;
+
+        client = new Client(nullName, testOverdraft);
+        assertNotNull(functionId + "Client Id should not be null", client.getId());
+        assertNull(functionId + "Client Name", client.getName());
+        assertEquals(functionId + "initialOverdraft incorrect", testOverdraft,
+            client.getInitialOverdraft(), delta);
+    }
+    @Test
+    public void createClientWithNullNameAndWrongOverdraft() throws Exception {
+        thrown.expect(Exception.class);
+        thrown.expectMessage("Create new client: Wrong Initial Overdraft: " + wrongOverdraft);
+        new Client(nullName, wrongOverdraft);
+    }
+
+    /**
+     * Constructor public Client(UUID clientId, String clientName)
+     *  Variants:
+     *  {id, name}, {id, null name}, {null id, name}, {null id, null name}
+     */
+    @Test
+    public void createClientWithIdAndName() {
+        final String functionId = "Client(testId, testClientName): ";
+        final Client client;
+
+        client = new Client(testId, testClientName);
+        assertEquals(functionId + "Wrong Id", testId, client.getId());
+        assertEquals(functionId + "Client Name incorrect",
+            testClientName, client.getName());
+        assertEquals(functionId + "initialOverdraft incorrect",
+            defaultOverdraft, client.getInitialOverdraft(), delta);
+    }
+    @Test
+    public void createClientWithIdAndNullName () {
+        final String functionId = "Client(testId, nullName): ";
+        final Client client;
+
+        client = new Client(testId, nullName);
+        assertEquals(functionId + "Wrong Id", testId, client.getId());
+        assertNull(functionId + "Client Name", client.getName());
+        assertEquals(functionId + "initialOverdraft incorrect",
+            defaultOverdraft, client.getInitialOverdraft(), delta);
+    }
+    @Test
+    public void createClientWithNullIdAndName() {
+        final String functionId = "Client(nullId, testClientName): ";
+        final Client client;
+
+        client = new Client(nullId, testClientName);
+        assertNotNull(functionId + "Client Id should not be null", client.getId());
+        assertEquals(functionId + "Client Name incorrect",
+            testClientName, client.getName());
+        assertEquals(functionId + "initialOverdraft incorrect",
+            defaultOverdraft, client.getInitialOverdraft(), delta);
+    }
+    @Test
+    public void createClientWithNullIdAndNullName() {
+        final String functionId = "Client(nullId, nullName): ";
+        final Client client;
+
+        client = new Client(nullId, nullName);
+        assertNotNull(functionId + "Client Id should not be null", client.getId());
+        assertNull(functionId + "Client Name", client.getName());
+        assertEquals(functionId + "initialOverdraft incorrect",
+            defaultOverdraft, client.getInitialOverdraft(), delta);
+    }
+    // Constructor public Client(UUID clientId, String clientName, float clientInitialOverdraft) throws Exception {
 }
