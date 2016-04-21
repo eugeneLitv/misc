@@ -66,21 +66,24 @@ public class BankApplication {
         Client c;
         for (int i = 0; i < numberOfClients; i++) {
             initialOverdraft = 200f + r.nextInt(200);
-            if (initialOverdraft < 300) {
-                c = b.addClient(new Client("Client " + i));
-            } else {
-                c = b.addClient(new Client("Client " + i, initialOverdraft));
-            }
-            numberOfAccounts = r.nextInt(10);
-            Logger.info("Client: \"{}\" numberOfAccounts: {}", i,  numberOfAccounts);
-            for (int j = 0; j < numberOfAccounts; j++) {
-                if (!c.createAccount(r.nextBoolean() ? AccountTypes.SAVING : AccountTypes.CHECKING).deposit(1000f + r.nextInt(1000))) {
-                    Logger.info("Cannot initially deposit account number: {}", j);
+            try {
+                if (initialOverdraft < 300) {
+                    c = b.addClient(new Client("Client " + i));
+                } else {
+                    c = b.addClient(new Client("Client " + i, initialOverdraft));
                 }
+                numberOfAccounts = r.nextInt(10);
+                Logger.info("Client: \"{}\" numberOfAccounts: {}", i, numberOfAccounts);
+                for (int j = 0; j < numberOfAccounts; j++) {
+                    if (!c.createAccount(r.nextBoolean() ? AccountTypes.SAVING : AccountTypes.CHECKING).deposit(1000f + r.nextInt(1000))) {
+                        Logger.info("Cannot initially deposit account number: {}", j);
+                    }
+                }
+            } catch (Exception e) {
+                Logger.error("Can not create client with name {} and initialOverdraft {}",
+                    "Client " + i, initialOverdraft);
             }
         }
-        b.addClient(new Client()).createAccount(AccountTypes.SAVING).deposit(1000f);
-        b.addClient(new Client(500f)).createAccount(AccountTypes.CHECKING).deposit(1000f);
         Logger.info("========== initialize end ==========");
     }
     public void printBankReport(Bank b) {
@@ -95,7 +98,12 @@ public class BankApplication {
          * Create some new accounts
          */
         b.addClient(new Client("Additional Client 1"));
-        b.addClient(new Client("Additional Client 2", 400f));
+        try {
+            b.addClient(new Client("Additional Client 2", 400f));
+        } catch (Exception e){
+            Logger.error("Can not add client with name {} and overdraft {}: ",
+                "Additional Client 2", 400f, e.getMessage());
+        }
         /**
          * Withdraw
          */
