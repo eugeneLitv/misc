@@ -39,8 +39,8 @@ class Client implements Report {
     public Client(UUID clientId, String clientName, float clientInitialOverdraft) throws Exception {
         this(clientId, clientName);
         if ( ! setInitialOverdraft(clientInitialOverdraft) ) {
-            String eMsg = "Create new client: Wrong clientInitialOverdraft: " + clientInitialOverdraft;
-            Logger.warn(eMsg);
+            String eMsg = "Create new client: Wrong Initial Overdraft: " + clientInitialOverdraft;
+            Logger.error(eMsg);
             throw new Exception(eMsg);
         }
     }
