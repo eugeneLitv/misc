@@ -50,27 +50,33 @@ class Client implements Report {
         Logger.info("=== Client Report ===");
         Logger.info("Client Id: {} Name: {}", id, name);
         Logger.info("initialOverdraft: {}", initialOverdraft);
-        if ( !accounts.isEmpty() ) {
+        if ( accounts.isEmpty() ) {
+            Logger.info("The client has no any accounts.");
+        } else {
             int num = 0,
                 numChecking = 0,
-                numSaving = 0;
+                numSaving = 0,
+                numUnknown = 0;
 
             for (Account a : accounts.values()) {
                 num++;
-                if (a instanceof CheckingAccount) {
-                    numChecking++;
-                } else if (a instanceof SavingAccount) {
-                    numSaving++;
+                switch (a.getType()) {
+                    case CHECKING: numChecking++;
+                        break;
+                    case SAVING: numSaving++;
+                        break;
+                    default:
+                        numUnknown++;
+                        break;
                 }
             }
             Logger.info("Total accounts: {}", num);
             Logger.info("Number of Saving Accounts: {}", numSaving);
             Logger.info("Number of Checking Accounts: {}", numChecking);
+            if ( numUnknown > 0 ) { Logger.info("Unknown type accounts: {}", numUnknown);}
             Logger.info("Total Balance: {}", getBalance());
             Logger.info("Accounts:");
             accounts.values().stream().forEach(Account::printReport);
-        } else {
-            Logger.info("The client has no any accounts.");
         }
     }
 
