@@ -143,5 +143,21 @@ public class ClientTest {
         assertEquals(functionId + "initialOverdraft incorrect",
             defaultOverdraft, client.getInitialOverdraft(), delta);
     }
-    // Constructor public Client(UUID clientId, String clientName, float clientInitialOverdraft) throws Exception {
+
+    /**
+     * Constructor public Client(UUID clientId, String clientName, float clientInitialOverdraft) throws Exception {
+     *  Variants:
+     *  {id, name, correct}, {id, name, wrong},
+     *  {id, null name, correct}, {id, null name, wrong},
+     *  {null id, name, correct}, {null id, name, wrong},
+     *  {null id, null name, correct}, {null id, null name, wrong}
+     */
+    @Test public void createClientIdNameOverdraft() { }
+    @Test public void createClientIdNameWrongOverdraft() { }
+    @Test public void createClientIdNullNameOverdraft() { }
+    @Test public void createClientIdNullNameWrongOverdraft() { }
+    @Test public void createClientNullIdNameOverdraft() { }
+    @Test public void createClientNullIdNameWrongOverdraft() { }
+    @Test public void createClientNullIdNullNameOverdraft() { }
+    @Test public void createClientNullIdNullNameWrongOverdraft() { }
 }
