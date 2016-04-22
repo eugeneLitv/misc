@@ -6,6 +6,7 @@ package com.acme.bankapp;
 
 import java.util.UUID;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -152,12 +153,20 @@ public class ClientTest {
      *  {null id, name, correct}, {null id, name, wrong},
      *  {null id, null name, correct}, {null id, null name, wrong}
      */
+    @Ignore("Not implemented yet")
     @Test public void createClientIdNameOverdraft() { }
+    @Ignore("Not implemented yet")
     @Test public void createClientIdNameWrongOverdraft() { }
+    @Ignore("Not implemented yet")
     @Test public void createClientIdNullNameOverdraft() { }
+    @Ignore("Not implemented yet")
     @Test public void createClientIdNullNameWrongOverdraft() { }
+    @Ignore("Not implemented yet")
     @Test public void createClientNullIdNameOverdraft() { }
+    @Ignore("Not implemented yet")
     @Test public void createClientNullIdNameWrongOverdraft() { }
+    @Ignore("Not implemented yet")
     @Test public void createClientNullIdNullNameOverdraft() { }
+    @Ignore("Not implemented yet")
     @Test public void createClientNullIdNullNameWrongOverdraft() { }
 }
