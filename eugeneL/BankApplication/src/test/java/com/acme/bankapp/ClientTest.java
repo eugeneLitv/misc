@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
 
@@ -21,6 +22,7 @@ public class ClientTest {
     private static final String testClientName = "Test JUnit Client";
     private static final float  testOverdraft = 100.34f;
     private static final UUID   testId = UUID.fromString("12345678-abab-fdfe-9090-9876543210af");
+    private static final UUID   testId2 = UUID.fromString("12345678-abab-fdfe-9090-9876543210bd");
     private static final UUID   nullId = null;
     private static final String nullName = null;
     private static final float  wrongOverdraft = -1;
@@ -169,4 +171,29 @@ public class ClientTest {
     @Test public void createClientNullIdNullNameOverdraft() { }
     @Ignore("Not implemented yet")
     @Test public void createClientNullIdNullNameWrongOverdraft() { }
+
+    /**
+     * equals hashCode
+     */
+    @Test
+    public void compareEqual() throws Exception {
+        final Client client;
+        final Client client2;
+        final Client client3;
+
+        client = new Client(testId, nullName);
+        client2 = new Client(testId, testClientName, testOverdraft);
+        client3 = client;
+        assertEquals(client, client2);
+        assertEquals(client, client);
+    }
+    @Test
+    public void compareNotEqual() throws Exception {
+        final Client client;
+        final Client client2;
+
+        client = new Client(testId, testClientName);
+        client2 = new Client(testId2, testClientName, testOverdraft);
+        assertNotEquals(client, client2);
+    }
 }
