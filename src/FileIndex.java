@@ -1,11 +1,8 @@
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -74,12 +71,11 @@ public class FileIndex {
   }
 
   private static void GenerateFile(double fileSizeBytes) throws IOException {
-    final Path         filePath = Paths.get(fileName);
-    final IndexChars[] index;
-    final int          charsInIndex = getCharsInIndex(fileSizeBytes);
-    final double       lines = getLines(fileSizeBytes, charsInIndex);
+    final IndexChars[]   index;
+    final int            charsInIndex = getCharsInIndex(fileSizeBytes);
+    final double         lines = getLines(fileSizeBytes, charsInIndex);
+    final BufferedWriter file = Files.newBufferedWriter(Paths.get(fileName), StandardOpenOption.CREATE_NEW);
 
-    int bufSizeInLines;
     // simple check
     if ((Math.log(lines) / Math.log(IndexChars.length())) > charsInIndex) {
       System.out.println("Incorrect Number of lines - function getCharsInIndex is wrong.");
@@ -91,18 +87,13 @@ public class FileIndex {
       index[i] = IndexChars.A;
     }
 
-    bufSizeInLines = 10 * 1048576 / (charsInIndex + 1 + IndexChars.length() + 1);
-
     System.out.printf(
           "fileSizeBytes  : %.0f\n"
         + "Lines          : %.0f\n"
         + "Chars In Index : %d\n"
-        + "Index Example  : %s\n"
-        + "Buffer Lines   : %d\n",
-        fileSizeBytes, lines, charsInIndex, getArrayAsString(index), bufSizeInLines);
+        + "Index Example  : %s\n",
+        fileSizeBytes, lines, charsInIndex, getArrayAsString(index));
 
-    List<String> outLines = new ArrayList<>();
-    Files.write(filePath, outLines, StandardOpenOption.CREATE_NEW);
     StringBuilder outStringBuffer = new StringBuilder();
 
     for (double j = 0; j < lines; j++) {
@@ -114,11 +105,7 @@ public class FileIndex {
           .append(getRandomString("0123456789" + IndexChars.enumAsString().toLowerCase(), randomStringLength));
 
       // System.out.println(outStringBuffer.toString()); // used for debug
-      outLines.add(outStringBuffer.toString());
-      if (outLines.size() >= bufSizeInLines) {
-        Files.write(filePath, outLines, StandardOpenOption.APPEND);
-        outLines.clear();
-      }
+      file.write(outStringBuffer.toString());
 
       index[i] = index[i].next();
       while (index[i] == null) {
@@ -127,7 +114,7 @@ public class FileIndex {
         index[i] = index[i].next();
       }
     }
-    Files.write(filePath, outLines); //. write(new Byte(outStringBuffer.toString()));
+    file.close();
     System.out.println("Last Index Value: " + getArrayAsString(index));
   }
 
