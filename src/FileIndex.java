@@ -92,25 +92,25 @@ public class FileIndex {
     }
 
     bufSizeInLines = 10 * 1048576 / (charsInIndex + 1 + IndexChars.length() + 1);
+
     System.out.printf(
           "fileSizeBytes  : %.0f\n"
         + "Lines          : %.0f\n"
         + "Chars In Index : %d\n"
         + "Index Example  : %s\n"
         + "Buffer Lines   : %d\n",
-        fileSizeBytes, lines, charsInIndex, Arrays.toString(index), bufSizeInLines);
+        fileSizeBytes, lines, charsInIndex, getArrayAsString(index), bufSizeInLines);
 
     List<String> outLines = new ArrayList<>();
     Files.write(filePath, outLines, StandardOpenOption.CREATE_NEW);
     StringBuilder outStringBuffer = new StringBuilder();
+
     for (double j = 0; j < lines; j++) {
       int i = index.length - 1;
 
       outStringBuffer.setLength(0);
-      for (int k = 0; k < index.length; k++) {
-        outStringBuffer.append(index[k]);
-      }
-      outStringBuffer.append(" ")
+      outStringBuffer.append(getArrayAsString(index))
+          .append(" ")
           .append(getRandomString("0123456789" + IndexChars.enumAsString().toLowerCase(), randomStringLength));
 
       // System.out.println(outStringBuffer.toString()); // used for debug
@@ -128,7 +128,7 @@ public class FileIndex {
       }
     }
     Files.write(filePath, outLines); //. write(new Byte(outStringBuffer.toString()));
-    System.out.println("Last Index Value: " + Arrays.toString(index));
+    System.out.println("Last Index Value: " + getArrayAsString(index));
   }
 
   private static void SearchForString() {
@@ -166,5 +166,14 @@ public class FileIndex {
       charArray[i] = allowedChars.charAt(rnd.nextInt(allowedChars.length()));
     }
     return new String(charArray);
+  }
+
+  private static String getArrayAsString(Object[] index) {
+    StringBuilder string = new StringBuilder();
+
+    for (int i = 0; i < index.length; i++) {
+      string.append(index[i]);
+    }
+    return string.toString();
   }
 }
