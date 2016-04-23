@@ -22,7 +22,6 @@ enum IndexChars {
 }
 
 public class FileIndex {
-  //private static final String[] IndexChars = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" }
   private static final String fileName = "big_ordered_file.txt";
   private static final String searchAtBegin = "";
   private static final String searchAtEnd = "";
