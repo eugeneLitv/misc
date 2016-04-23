@@ -10,14 +10,14 @@ enum IndexChars {
   A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z;
   private static final IndexChars[] arrayOfIndexChars = values();
 
+  public static int length() {
+    return arrayOfIndexChars.length;
+  }
   public IndexChars next() {
     if (this.ordinal() + 1 >= arrayOfIndexChars.length) {
       return null;
     }
     return arrayOfIndexChars[this.ordinal() + 1];
-  }
-  public int length() {
-    return arrayOfIndexChars.length;
   }
 }
 
