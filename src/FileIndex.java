@@ -26,6 +26,7 @@ public class FileIndex {
   private static final String searchAtBegin = "";
   private static final String searchAtEnd = "";
   private static final double bytesInGb = 1024f * 1024f * 1024f;
+  private static final int randomStringLength = 26;
 
   private static void usage() {
     System.out.printf("Usage:\njava %s {generate X | SSSSS}\n", FileIndex.class.getName());
@@ -64,7 +65,7 @@ public class FileIndex {
     final double       lines = getLines(fileSizeBytes, charsInIndex);
 
     // simple check
-    if ((Math.log(lines) / Math.log(26)) > charsInIndex) {
+    if ((Math.log(lines) / Math.log(IndexChars.length())) > charsInIndex) {
       System.out.println("Incorrect Number of lines - function getCharsInIndex is wrong.");
       System.exit(1);
     }
@@ -106,13 +107,13 @@ public class FileIndex {
     int   charsInIndex = 0;
     do {
       charsInIndex++;
-      lines = fileSize / (26 + 1 + 1 + charsInIndex); // 26 letters, 1 space 1 eol, at least 1 index
-    } while ( (Math.log(lines) / Math.log(26)) > charsInIndex );
+      lines = fileSize / (charsInIndex + 1 + randomStringLength + 1); // 1 space, 1 eol
+    } while ( (Math.log(lines) / Math.log(IndexChars.length())) > charsInIndex );
     return charsInIndex;
   }
 
   private static double getLines(double fileSizeBytes, int charsInIndex) {
-    int lineLength = charsInIndex + 1 + 26 + 1; // index + space + 26_bytes_string + eol
+    int lineLength = charsInIndex + 1 + randomStringLength + 1; // index + space + string + eol
     return fileSizeBytes / lineLength;
   }
 }
