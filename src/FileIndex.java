@@ -1,5 +1,6 @@
 import java.io.File;
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Package: PACKAGE_NAME
@@ -123,5 +124,15 @@ public class FileIndex {
   private static double getLines(double fileSizeBytes, int charsInIndex) {
     int lineLength = charsInIndex + 1 + randomStringLength + 1; // index + space + string + eol
     return fileSizeBytes / lineLength;
+  }
+
+  private static String getRandomString(String allowedChars, int outStringLength) {
+    Random rnd = new Random();
+    char [] charArray = new char[outStringLength];
+
+    for (int i = 0; i < charArray.length; i++) {
+      charArray[i] = allowedChars.charAt(rnd.nextInt(allowedChars.length()));
+    }
+    return new String(charArray);
   }
 }
