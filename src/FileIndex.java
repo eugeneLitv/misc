@@ -13,6 +13,14 @@ enum IndexChars {
   public static int length() {
     return arrayOfIndexChars.length;
   }
+  public static String enumAsString() {
+    char [] str = new char[arrayOfIndexChars.length];
+    for (int i = 0; i < str.length; i++) {
+      str[i] = arrayOfIndexChars[i].toString().charAt(0);
+    }
+    return new String(str);
+  }
+
   public IndexChars next() {
     if (this.ordinal() + 1 >= arrayOfIndexChars.length) {
       return null;
