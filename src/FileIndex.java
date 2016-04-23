@@ -94,7 +94,7 @@ public class FileIndex {
     System.out.println("Not Implemented Yet.");
   }
 
-  private static int getCharsInIndex(double fileSize) {
+  private static int getCharsInIndex(double fileSizeBytes) {
     /**
      * ABCDEFGHIJ abcdefghijklmnopqastuvwxyz\n
      * ABCDEFGHIJ - [A-Z] ln(lines)/ln(26) bytes
@@ -107,7 +107,7 @@ public class FileIndex {
     int   charsInIndex = 0;
     do {
       charsInIndex++;
-      lines = fileSize / (charsInIndex + 1 + randomStringLength + 1); // 1 space, 1 eol
+      lines = fileSizeBytes / (charsInIndex + 1 + randomStringLength + 1); // 1 space, 1 eol
     } while ( (Math.log(lines) / Math.log(IndexChars.length())) > charsInIndex );
     return charsInIndex;
   }
