@@ -120,10 +120,74 @@ public class FileIndex {
     System.out.println("Last Index Value: " + indexValue);
   }
 
-  private static void SearchForString() {
-    System.out.println("Not Implemented Yet.");
+  private static void SearchForString(String searchIndex) throws IOException {
+    long startTime, endTime;
+    String result;
+
+    startTime = System.currentTimeMillis();
+    result = SearchSeq(searchIndex);
+    endTime = System.currentTimeMillis();
+    System.out.printf("==== Sequential search ====%nSearch time (ms) : %d%nFound string : %s%n",
+        endTime - startTime, result == null ? "Not Found" : result);
+
+    startTime = System.currentTimeMillis();
+    result = SearchBin(searchIndex);
+    endTime = System.currentTimeMillis();
+    System.out.printf("==== Binary search ====%nSearch time (ms) : %d%nFound string : %s%n",
+        endTime - startTime, result == null ? "Not Found" : result);
   }
 
+  private static String SearchSeq(String searchIndex) throws IOException {
+    final BufferedReader file = Files.newBufferedReader(Paths.get(fileName));
+    String result;
+
+    do {
+      result = file.readLine();
+    } while (result != null && ! result.startsWith(searchIndex));
+    // while ( (result = file.readLine()) != null && ! result.startsWith(searchIndex) );
+    // file.lines().filter(s -> s.startsWith(searchIndex)).
+    file.close();
+    return result;
+  }
+
+  private static String SearchBin(String searchIndex) throws IOException {
+    final RandomAccessFile file       = new RandomAccessFile(fileName, "r");
+    final long             fileLength = file.length();
+    final int              lineLength = searchIndex.length() + 1 + randomStringLength + 1;
+
+    byte[] buffer = new byte[readBufferLength];
+    long   currentPos = (fileLength / 2) - (readBufferLength / 2);
+    long   currentBlockLength;
+    int    startOfString;
+    String resultBlock;
+    String result;
+
+    currentBlockLength = fileLength / 2;
+    currentPos = currentPos - (currentPos % lineLength); // to simplify search
+    do {
+      file.seek(currentPos - (readBufferLength / 2));
+      file.read(buffer);
+      resultBlock = getBufferAsString(buffer);.toString().substring(
+          buffer.toString().indexOf('\n') + 1,
+          buffer.toString().lastIndexOf('\n') - 1);
+
+      if (searchIndex.compareTo(resultBlock) < 0) {
+        currentBlockLength = currentBlockLength / 2;
+        currentPos = currentPos - currentBlockLength;
+      } else if (searchIndex.compareTo(resultBlock.substring(resultBlock.lastIndexOf('\n') + 1)) > 0) {
+        currentBlockLength = currentBlockLength / 2;
+        currentPos = currentPos + currentBlockLength;
+      } else {
+        // we found block
+        break;
+      }
+    } while (currentBlockLength > readBufferLength);
+
+    result = resultBlock.buffer.toString().indexOf(searchIndex);
+
+    result = String.format("%s %s", Long.toString(currentPos), Long.toString(fileLength));
+    return result;
+  }
   private static int getCharsInIndex(double fileSizeBytes) {
     /**
      * ABCDEFGHIJ abcdefghijklmnopqastuvwxyz\n
