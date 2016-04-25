@@ -160,8 +160,8 @@ public class FileIndex {
   private static String getArrayAsString(Object[] index) {
     StringBuilder string = new StringBuilder();
 
-    for (int i = 0; i < index.length; i++) {
-      string.append(index[i]);
+    for (Object c : index) {
+      string.append(c);
     }
     return string.toString();
   }
