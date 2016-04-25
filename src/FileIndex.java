@@ -1,5 +1,4 @@
-import java.io.BufferedWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -39,9 +38,10 @@ public class FileIndex {
   private static final String searchAtEnd = "";
   private static final double bytesInGb = 1024f * 1024f * 1024f;
   private static final int randomStringLength = 26;
+  private static final int readBufferLength = 8192; // read buffer 8k
 
   private static void usage() {
-    System.out.printf("Usage:\njava %s {generate X | SSSSS}\n", FileIndex.class.getName());
+    System.out.printf("Usage:%njava %s {generate X | SSSSS}%n", FileIndex.class.getName());
     System.out.println("\tX - size of generated file in Gigabytes");
     System.out.println("\tSSSSS - search string in the generated file");
   }
@@ -63,7 +63,7 @@ public class FileIndex {
         }
         break;
       case 1:
-        SearchForString();
+        SearchForString(args[0]);
         break;
       default:
         usage();
@@ -88,21 +88,23 @@ public class FileIndex {
     }
 
     System.out.printf(
-          "fileSizeBytes  : %.0f\n"
-        + "Lines          : %.0f\n"
-        + "Chars In Index : %d\n"
-        + "Index Example  : %s\n",
+          "fileSizeBytes  : %.0f%n"
+        + "Lines          : %.0f%n"
+        + "Chars In Index : %d%n"
+        + "Index Example  : %s%n",
         fileSizeBytes, lines, charsInIndex, getArrayAsString(index));
 
     StringBuilder outStringBuffer = new StringBuilder();
-
+    String indexValue = null;
     for (double j = 0; j < lines; j++) {
       int i = index.length - 1;
+      indexValue = getArrayAsString(index);
 
       outStringBuffer.setLength(0);
-      outStringBuffer.append(getArrayAsString(index))
+      outStringBuffer.append(indexValue)
           .append(" ")
-          .append(getRandomString("0123456789" + IndexChars.enumAsString().toLowerCase(), randomStringLength));
+          .append(getRandomString("0123456789" + IndexChars.enumAsString().toLowerCase(), randomStringLength))
+          .append('\n');
 
       // System.out.println(outStringBuffer.toString()); // used for debug
       file.write(outStringBuffer.toString());
@@ -115,7 +117,7 @@ public class FileIndex {
       }
     }
     file.close();
-    System.out.println("Last Index Value: " + getArrayAsString(index));
+    System.out.println("Last Index Value: " + indexValue);
   }
 
   private static void SearchForString() {
