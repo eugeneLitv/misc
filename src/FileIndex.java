@@ -168,17 +168,23 @@ public class FileIndex {
       bytesRead = file.read(buffer);
       if (bytesRead == -1) break;
 
-      // System.out.printf("currentPos: %d\n", currentPos);
+      // System.out.printf("currentPos: %d blockLeft: %d%n", currentPos, blockLeft);
       if ( compareLine(Direction.FORTH, buffer, bytesRead, searchIndex) < 0 ) {
         // need buffer before this one
         if (currentPos <= 0) { break; } // reached the beginning - not found
         blockLeft = blockLeft / 2;
+        if (blockLeft < readBufferLength) {
+          blockLeft = readBufferLength;
+        }
         currentPos = currentPos - blockLeft;
         if (currentPos < 0) { currentPos = 0; }
       } else if ( compareLine(Direction.BACK, buffer, bytesRead, searchIndex) > 0 ) {
         // need buffer after this one
         if (currentPos >= fileLength - readBufferLength) { break; } // reached the end - not found
         blockLeft = blockLeft / 2;
+        if (blockLeft < readBufferLength) {
+          blockLeft = readBufferLength;
+        }
         currentPos = currentPos + blockLeft;
         if (currentPos > fileLength - readBufferLength) { currentPos = fileLength - readBufferLength; }
       } else {
