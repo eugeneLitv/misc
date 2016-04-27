@@ -198,6 +198,10 @@ public class FileIndex {
           if (bytesRead == -1) break;
           result = getSearchLine(buffer, bytesRead, searchIndex);
         }
+        // strip EOL
+        if (result.charAt(result.length() - 1) == symbolEOL) {
+          result = result.substring(0, result.length() - 1);
+        }
         break;
       }
     }
