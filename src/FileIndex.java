@@ -168,7 +168,7 @@ public class FileIndex {
       bytesRead = file.read(buffer);
       if (bytesRead == -1) break;
 
-      System.out.printf("currentPos: %d\n", currentPos);
+      // System.out.printf("currentPos: %d\n", currentPos);
       if ( compareLine(Direction.FORTH, buffer, bytesRead, searchIndex) < 0 ) {
         // need buffer before this one
         if (currentPos <= 0) { break; } // reached the beginning - not found
@@ -184,8 +184,14 @@ public class FileIndex {
       } else {
         // searchIndex is in this block
         result = getSearchLine(buffer, bytesRead, searchIndex);
-        //if (result.indexOf(symbolEOL) == -1) {
-        //}
+        if (result.indexOf(symbolEOL) == -1) {
+          System.out.printf("incomplete: '%s'%n", result);
+          currentPos = currentPos + readBufferLength - result.length();
+          file.seek(currentPos);
+          bytesRead = file.read(buffer);
+          if (bytesRead == -1) break;
+          result = getSearchLine(buffer, bytesRead, searchIndex);
+        }
         break;
       }
     }
@@ -230,11 +236,10 @@ public class FileIndex {
 
       if (endIdx < 0) {
         result = result.substring(beginIdx);
-        System.out.printf("incomplete: %s", result);
-        return result;
       } else {
-        return result.substring(beginIdx, endIdx);
+        result = result.substring(beginIdx, endIdx + 1);
       }
+      return result;
     }
 
     return null;
