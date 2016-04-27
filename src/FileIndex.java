@@ -31,21 +31,22 @@ enum IndexChars {
     return arrayOfIndexChars[this.ordinal() + 1];
   }
 }
+enum Direction {BACK, FORTH}
 
 public class FileIndex {
   private static final String fileName = "big_ordered_file.txt";
-  private static final String searchAtBegin = "";
-  private static final String searchAtEnd = "";
   private static final double bytesInGb = 1024f * 1024f * 1024f;
   private static final int randomStringLength = 26;
   private static final int readBufferLength = 8192; // read buffer 8k
+  private static final char symbolSpace = ' ';
+  private static final char symbolEOL = '\n';
 
   private static void usage() {
     System.out.printf("Usage:%njava %s {generate X | SSSSS}%n", FileIndex.class.getName());
     System.out.println("\tX - size of generated file in Gigabytes");
     System.out.println("\tSSSSS - search string in the generated file");
   }
-  public static void main(String args[]) throws IOException {
+  public static void main(String args[]) throws Exception {
     final double fileSizeBytes;
     switch (args.length) {
       case 2:
@@ -120,20 +121,22 @@ public class FileIndex {
     System.out.println("Last Index Value: " + indexValue);
   }
 
-  private static void SearchForString(String searchIndex) throws IOException {
+  private static void SearchForString(String searchIndex) throws Exception {
     long startTime, endTime;
     String result;
 
+    System.out.println("==== Sequential search ====");
     startTime = System.currentTimeMillis();
     result = SearchSeq(searchIndex);
     endTime = System.currentTimeMillis();
-    System.out.printf("==== Sequential search ====%nSearch time (ms) : %d%nFound string : %s%n",
+    System.out.printf("Search time (ms) : %d%nFound string : %s%n",
         endTime - startTime, result == null ? "Not Found" : result);
 
+    System.out.println("==== Binary search ====");
     startTime = System.currentTimeMillis();
     result = SearchBin(searchIndex);
     endTime = System.currentTimeMillis();
-    System.out.printf("==== Binary search ====%nSearch time (ms) : %d%nFound string : %s%n",
+    System.out.printf("Search time (ms) : %d%nFound string : %s%n",
         endTime - startTime, result == null ? "Not Found" : result);
   }
 
@@ -150,44 +153,93 @@ public class FileIndex {
     return result;
   }
 
-  private static String SearchBin(String searchIndex) throws IOException {
+  private static String SearchBin(String searchIndex) throws Exception {
     final RandomAccessFile file       = new RandomAccessFile(fileName, "r");
     final long             fileLength = file.length();
-    final int              lineLength = searchIndex.length() + 1 + randomStringLength + 1;
 
     byte[] buffer = new byte[readBufferLength];
     long   currentPos = (fileLength / 2) - (readBufferLength / 2);
-    long   currentBlockLength;
-    int    startOfString;
-    String resultBlock;
-    String result;
+    long   blockLeft = currentPos;
+    int    bytesRead;
+    String result = null;
 
-    currentBlockLength = fileLength / 2;
-    currentPos = currentPos - (currentPos % lineLength); // to simplify search
-    do {
-      file.seek(currentPos - (readBufferLength / 2));
-      file.read(buffer);
-      resultBlock = getBufferAsString(buffer);.toString().substring(
-          buffer.toString().indexOf('\n') + 1,
-          buffer.toString().lastIndexOf('\n') - 1);
+    while (true) {
+      file.seek(currentPos);
+      bytesRead = file.read(buffer);
+      if (bytesRead == -1) break;
 
-      if (searchIndex.compareTo(resultBlock) < 0) {
-        currentBlockLength = currentBlockLength / 2;
-        currentPos = currentPos - currentBlockLength;
-      } else if (searchIndex.compareTo(resultBlock.substring(resultBlock.lastIndexOf('\n') + 1)) > 0) {
-        currentBlockLength = currentBlockLength / 2;
-        currentPos = currentPos + currentBlockLength;
+      System.out.printf("currentPos: %d\n", currentPos);
+      if ( compareLine(Direction.FORTH, buffer, bytesRead, searchIndex) < 0 ) {
+        // need buffer before this one
+        if (currentPos <= 0) { break; } // reached the beginning - not found
+        blockLeft = blockLeft / 2;
+        currentPos = currentPos - blockLeft;
+        if (currentPos < 0) { currentPos = 0; }
+      } else if ( compareLine(Direction.BACK, buffer, bytesRead, searchIndex) > 0 ) {
+        // need buffer after this one
+        if (currentPos >= fileLength - readBufferLength) { break; } // reached the end - not found
+        blockLeft = blockLeft / 2;
+        currentPos = currentPos + blockLeft;
+        if (currentPos > fileLength - readBufferLength) { currentPos = fileLength - readBufferLength; }
       } else {
-        // we found block
+        // searchIndex is in this block
+        result = getSearchLine(buffer, bytesRead, searchIndex);
+        //if (result.indexOf(symbolEOL) == -1) {
+        //}
         break;
       }
-    } while (currentBlockLength > readBufferLength);
+    }
 
-    result = resultBlock.buffer.toString().indexOf(searchIndex);
-
-    result = String.format("%s %s", Long.toString(currentPos), Long.toString(fileLength));
     return result;
   }
+
+  private static int compareLine(Direction direction, byte[] buffer, int bytesRead, String searchIndex) throws Exception {
+    final int searchIndexLen = searchIndex.length();
+
+    int pos = 0;
+
+    if (bytesRead < searchIndexLen) { throw new Exception("Not enough bytes in buffer"); }
+
+    switch (direction) {
+      case FORTH:
+        pos = searchIndexLen;
+        while (buffer[pos] != symbolSpace) {
+          pos++;
+          if (pos >= bytesRead) {throw new Exception("Index not found in read buffer"); }
+        }
+        break;
+      case BACK:
+        pos = bytesRead - 1;
+        while (buffer[pos] != symbolSpace) {
+          pos--;
+          if (pos <= searchIndexLen) {throw new Exception("Index not found in read buffer"); }
+        }
+        break;
+    }
+
+    return searchIndex.compareTo(new String(buffer, pos - searchIndexLen, searchIndexLen));
+  }
+
+  private static String getSearchLine(byte[] buffer, int bytesRead, String searchIndex) throws Exception {
+    int beginIdx, endIdx;
+    String result = new String(buffer, 0, bytesRead);
+
+    beginIdx = result.indexOf(searchIndex);
+    if (beginIdx >= 0) {
+      endIdx = result.indexOf(symbolEOL, beginIdx);
+
+      if (endIdx < 0) {
+        result = result.substring(beginIdx);
+        System.out.printf("incomplete: %s", result);
+        return result;
+      } else {
+        return result.substring(beginIdx, endIdx);
+      }
+    }
+
+    return null;
+  }
+
   private static int getCharsInIndex(double fileSizeBytes) {
     /**
      * ABCDEFGHIJ abcdefghijklmnopqastuvwxyz\n
