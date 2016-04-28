@@ -125,16 +125,16 @@ public class FileIndex {
     long startTime, endTime;
     String result;
 
-    System.out.println("==== Sequential search ====");
+    System.out.println("==== Binary search ====");
     startTime = System.currentTimeMillis();
-    result = SearchSeq(searchIndex);
+    result = SearchBin(searchIndex);
     endTime = System.currentTimeMillis();
     System.out.printf("Search time (ms) : %d%nFound string : %s%n",
         endTime - startTime, result == null ? "Not Found" : result);
 
-    System.out.println("==== Binary search ====");
+    System.out.println("==== Sequential search ====");
     startTime = System.currentTimeMillis();
-    result = SearchBin(searchIndex);
+    result = SearchSeq(searchIndex);
     endTime = System.currentTimeMillis();
     System.out.printf("Search time (ms) : %d%nFound string : %s%n",
         endTime - startTime, result == null ? "Not Found" : result);
