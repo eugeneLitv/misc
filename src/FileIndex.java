@@ -189,17 +189,21 @@ public class FileIndex {
       } else {
         // searchIndex is in this block
         result = getSearchLine(buffer, bytesRead, searchIndex);
-        if (result.indexOf(symbolEOL) == -1) {
-          System.out.printf("incomplete: '%s'%n", result);
-          currentPos = currentPos + readBufferLength - result.length();
-          file.seek(currentPos);
-          bytesRead = file.read(buffer);
-          if (bytesRead == -1) break;
-          result = getSearchLine(buffer, bytesRead, searchIndex);
-        }
-        // strip EOL
-        if (result.charAt(result.length() - 1) == symbolEOL) {
-          result = result.substring(0, result.length() - 1);
+        if (result != null) {
+          if (result.indexOf(symbolEOL) == -1) {
+            System.out.printf("incomplete: '%s'%n", result);
+            currentPos = currentPos + readBufferLength - result.length();
+            file.seek(currentPos);
+            bytesRead = file.read(buffer);
+            if (bytesRead == -1) {
+              break; // cannot reread the block - return incomplete line
+            }
+            result = getSearchLine(buffer, bytesRead, searchIndex);
+          }
+          // strip EOL
+          if (result.charAt(result.length() - 1) == symbolEOL) {
+            result = result.substring(0, result.length() - 1);
+          }
         }
         break;
       }
