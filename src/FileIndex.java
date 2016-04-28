@@ -74,7 +74,7 @@ public class FileIndex {
   private static void GenerateFile(double fileSizeBytes) throws IOException {
     final IndexChars[]   index;
     final int            charsInIndex = getCharsInIndex(fileSizeBytes);
-    final double         lines = getLines(fileSizeBytes, charsInIndex);
+    final double         lines = fileSizeBytes / (charsInIndex + 1 + randomStringLength + 1);
     final BufferedWriter file = Files.newBufferedWriter(Paths.get(fileName), StandardOpenOption.CREATE_NEW);
 
     // simple check
@@ -271,11 +271,6 @@ public class FileIndex {
       lines = fileSizeBytes / (charsInIndex + 1 + randomStringLength + 1); // 1 space, 1 eol
     } while ( (Math.log(lines) / Math.log(IndexChars.length())) > charsInIndex );
     return charsInIndex;
-  }
-
-  private static double getLines(double fileSizeBytes, int charsInIndex) {
-    int lineLength = charsInIndex + 1 + randomStringLength + 1; // index + space + string + eol
-    return fileSizeBytes / lineLength;
   }
 
   private static String getRandomString(String allowedChars, int outStringLength) {
