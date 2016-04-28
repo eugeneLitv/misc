@@ -147,8 +147,6 @@ public class FileIndex {
     do {
       result = file.readLine();
     } while (result != null && ! result.startsWith(searchIndex));
-    // while ( (result = file.readLine()) != null && ! result.startsWith(searchIndex) );
-    // file.lines().filter(s -> s.startsWith(searchIndex)).
     file.close();
     return result;
   }
